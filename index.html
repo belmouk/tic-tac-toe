@@ -14,19 +14,22 @@
         <h1>Tic-Tac-Toe</h1>
     </header>
     <main>
-        <div id="game-update"></div>
-        <button type="button" id="restart-button">Play again</button>
-        <div id="board">
-            <div data-row="0" data-column="0"></div>
-            <div data-row="0" data-column="1"></div>
-            <div data-row="0" data-column="2"></div>
-            <div data-row="1" data-column="0"></div>
-            <div data-row="1" data-column="1"></div>
-            <div data-row="1" data-column="2"></div>
-            <div data-row="2" data-column="0"></div>
-            <div data-row="2" data-column="1"></div>
-            <div data-row="2" data-column="2"></div>
+
+        <div id="board-container">
+            <div id="board">
+                <div data-row="0" data-column="0"></div>
+                <div data-row="0" data-column="1"></div>
+                <div data-row="0" data-column="2"></div>
+                <div data-row="1" data-column="0"></div>
+                <div data-row="1" data-column="1"></div>
+                <div data-row="1" data-column="2"></div>
+                <div data-row="2" data-column="0"></div>
+                <div data-row="2" data-column="1"></div>
+                <div data-row="2" data-column="2"></div>
+            </div>
+            <div id="game-update"></div>
         </div>
+        <button type="button" id="restart-button">Play again</button>
     </main>
 </body>
 
