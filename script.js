@@ -27,8 +27,6 @@ const createPlayer = (name, mark) => {
     return {name, mark, playMove}
 };
 
-
-
 const Game = (function() {
     const checkRows = (board) => {
         let rowScores = [];
@@ -104,17 +102,16 @@ const Game = (function() {
     return {playCurrentTurn, moveToNextTurn, checkEnd}
 })();
 
-
 const player1 = createPlayer("A", 1);
 const player2 = createPlayer("B", -1);
 
 let players = [player1, player2];
 
-while (!Game.checkEnd()) {
-    const turn = Game.playCurrentTurn(players[0]);
-    Game.moveToNextTurn(turn);
-    console.table(Board.getState())
-};
+// while (!Game.checkEnd()) {
+//     const turn = Game.playCurrentTurn(players[0]);
+//     Game.moveToNextTurn(turn);
+//     console.table(Board.getState())
+// };
 Board.clear();
 console.log(`Nice game. ${players[1].name} wins`);
 
