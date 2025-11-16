@@ -34,11 +34,14 @@ const Game = (function() {
             const score = row.reduce((sum, cell) => {return sum + cell});
             rowScores.push(score);
         });
-        if (rowScores.filter(score => score === 3).length === 1 || rowScores.filter(score => score === -3).length === 1 ) {
-            return true;
+
+        if (rowScores.filter(score => score === 3).length === 1) {
+            return player1;
+        } else if (rowScores.filter(score => score === -3).length === 1) {
+            return player2;
         } else {
             return false;
-        }
+        };
     };
 
     const checkColumns = (board) => {
@@ -50,8 +53,11 @@ const Game = (function() {
             }
             columnScores.push(score);
         };
-        if (columnScores.filter(score => score === 3).length === 1 || columnScores.filter(score => score === -3).length === 1) {
-            return true;
+
+        if (columnScores.filter(score => score === 3).length === 1) {
+            return player1;
+        } else if (columnScores.filter(score => score === -3).length === 1) {
+            return player2;
         } else {
             return false;
         };
@@ -65,21 +71,41 @@ const Game = (function() {
             diagonal2score += board[i].at(-i-1);
         };
         const diagonalScores = [diagonal1score, diagonal2score];
-        if (diagonalScores.filter(score => score === 3).length === 1 || diagonalScores.filter(score => score === -3).length === 1) {
-            return true;
+        if (diagonalScores.filter(score => score === 3).length === 1) {
+            return player1;
+        } else if (diagonalScores.filter(score => score === -3).length === 1) {
+            return player2;
         } else {
             return false;
         };
     };
 
+    const checkDraw = (board) => {
+        for (let i = 0; i < 3; i++) {
+            for  (let j = 0; j < 3; j++) {
+                if (board[i][j] === 0) {return false}
+            }
+        }
+        return true
+    };
+
+    const checkWin = (board) => {
+        return (checkRows(board) || checkColumns(board) || checkDiagonals(board)) 
+        //     return true;
+        // } else {
+        //     return false;
+        // }
+    };
+
     const checkEnd = () => {
         const board = Board.getState();
-        if (checkRows(board) || checkColumns(board) || checkDiagonals(board)) {
+        if ( checkWin(board) || checkDraw(board)) {
             return true;
         } else {
             return false;
         }
     };
+
     const playCurrentTurn = (player, row, column) => {
         const move = player.playMove(row, column);
         return Board.placeMove(move);
@@ -93,13 +119,24 @@ const Game = (function() {
         };
     };
 
-    return {playCurrentTurn, moveToNextTurn, checkEnd}
+    const getWinner = (board) => {
+        winner = checkWin(board);
+        draw = checkDraw(board)
+        if (winner) {
+            return `${winner.name} has won the game!`;
+        } else if (draw) {
+            return "It's a draw. Play again!";
+        };
+    }
+
+    return {playCurrentTurn, moveToNextTurn, checkEnd, getWinner};
 })();
 
 //DOM manipulation
 
 const boardEl = document.querySelector("main #board");
 const updateEl = document.querySelector("main #game-update");
+const restartButton = document.querySelector("main #restart-button")
 
 const xMark = `<svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
   <!-- Puffy cartoon X -->
@@ -130,8 +167,15 @@ const displayTurn = (e) => {
         Game.moveToNextTurn(turn);
     }
 
-    Game.checkEnd() ? updateEl.textContent = `Nice game. ${players[1].name} wins.` : null;
+    if (Game.checkEnd()) {updateEl.textContent = Game.getWinner(Board.getState())};
+}
+
+const restartGame = () => {
+    Board.clear();
+    squaresEl = Array.from(boardEl.children)
+    squaresEl.forEach(child => {child.innerHTML = ""});
+    updateEl.innerHTML = "";
 }
 
 boardEl.addEventListener("click", displayTurn);
-
+restartButton.addEventListener("click", restartGame);
