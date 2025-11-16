@@ -14,7 +14,19 @@
         <h1>Tic-Tac-Toe</h1>
     </header>
     <main>
+        <form action="#" method="post">
+            <h2>Enter your names</h2>
+            <div class="form-input">
+                <label for="player1">Player 1</label>
+                <input type="text" id="player1" name="player1" required>
+            </div>
+            <div class="form-input">
+                <label for="player2">Player 2</label>
+                <input type="text" id="player2" name="player2" required>
+            </div>
 
+            <button type="submit" class="button">Confirm</button>
+        </form>
         <div id="board-container">
             <div id="board">
                 <div data-row="0" data-column="0"></div>
@@ -29,7 +41,7 @@
             </div>
             <div id="game-update"></div>
         </div>
-        <button type="button" id="restart-button">Play again</button>
+        <button type="button" id="restart-button" class="button">Play again</button>
     </main>
 </body>
 

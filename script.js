@@ -68,7 +68,7 @@ const Game = (function() {
         let diagonal2score = 0;
         for (let i = 0; i < 3; i++) {
             diagonal1score += board[i][i];
-            diagonal2score += board[i].at(-i-1);
+            diagonal2score += board[i][2-i];
         };
         const diagonalScores = [diagonal1score, diagonal2score];
         if (diagonalScores.filter(score => score === 3).length === 1) {
@@ -112,16 +112,12 @@ const Game = (function() {
     };
     
     const moveToNextTurn = (turn) => {
-        if (turn) {
-            players = [players[1], players[0]];
-        } else {
-            console.log(`${players[0].name} Choose another square`);
-        };
+        if (turn) {players = [players[1], players[0]];};
     };
 
     const getWinner = (board) => {
-        winner = checkWin(board);
-        draw = checkDraw(board)
+        const winner = checkWin(board);
+        const draw = checkDraw(board)
         if (winner) {
             return `${winner.name} has won the game!`;
         } else if (draw) {
@@ -137,6 +133,7 @@ const Game = (function() {
 const boardEl = document.querySelector("main #board");
 const updateEl = document.querySelector("main #game-update");
 const restartButton = document.querySelector("main #restart-button")
+const form = document.querySelector("main>form")
 
 const xMark = `<svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
   <!-- Puffy cartoon X -->
@@ -152,13 +149,13 @@ const oMark = `<svg width="140" height="140" viewBox="0 0 140 140" xmlns="http:/
 `;
 
 
-const player1 = createPlayer("A", 1, xMark);
-const player2 = createPlayer("B", -1, oMark);
+const player1 = createPlayer("Player 1", 1, xMark);
+const player2 = createPlayer("Player 2", -1, oMark);
 
 let players = [player1, player2];
 
 const displayTurn = (e) => {
-    squareEl = e.target.closest("div");
+    const squareEl = e.target.closest("div");
     const row = parseInt(squareEl.dataset.row);
     const column = parseInt(squareEl.dataset.column);
     if (!Game.checkEnd()) {
@@ -172,10 +169,21 @@ const displayTurn = (e) => {
 
 const restartGame = () => {
     Board.clear();
-    squaresEl = Array.from(boardEl.children)
+    const squaresEl = Array.from(boardEl.children)
     squaresEl.forEach(child => {child.innerHTML = ""});
     updateEl.innerHTML = "";
+    players = [player2, player1];
+    updateEl.textContent = `${players[0].name} plays first with ${players[0].visualMark === xMark ? "X" : "O"}.`;
 }
+
+const setPlayerNames = (e) => {
+    e.preventDefault();
+    player1.name= form.player1.value;
+    player2.name = form.player2.value;
+    updateEl.innerHTML = `${players[0].name} plays first with ${players[0].visualMark === xMark ? "X" : "O"}.`;
+}
+
 
 boardEl.addEventListener("click", displayTurn);
 restartButton.addEventListener("click", restartGame);
+form.addEventListener("submit", setPlayerNames);
