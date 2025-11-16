@@ -85,8 +85,8 @@ body {
 
 #board {
     display: grid;
-    grid-template-columns: repeat(3, 200px);
-    grid-template-rows: repeat(3, 200px);
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 400px;
     background-color: white;
 }
 
