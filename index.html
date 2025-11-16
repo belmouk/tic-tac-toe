@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic-Tact-Toe</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </head>
 
 <body>
@@ -14,16 +14,17 @@
         <h1>Tic-Tac-Toe</h1>
     </header>
     <main>
+        <div id="game-update"></div>
         <div id="board">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+            <div data-row="0" data-column="0"></div>
+            <div data-row="0" data-column="1"></div>
+            <div data-row="0" data-column="2"></div>
+            <div data-row="1" data-column="0"></div>
+            <div data-row="1" data-column="1"></div>
+            <div data-row="1" data-column="2"></div>
+            <div data-row="2" data-column="0"></div>
+            <div data-row="2" data-column="1"></div>
+            <div data-row="2" data-column="2"></div>
         </div>
     </main>
 </body>

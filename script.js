@@ -8,7 +8,7 @@ const Board = (function() {
     const getState = () => {return boardTable};
     const clear = () => {boardTable = [[0, 0, 0],[0, 0, 0],[0, 0, 0]]};
     const placeMove = (move) => {
-        ({mark, position} = move);
+        const {mark, position} = move;
 
         if (boardTable[position.row][position.column] == 0) {
             boardTable[position.row][position.column] = mark;
@@ -21,10 +21,10 @@ const Board = (function() {
     return {getState, clear, placeMove};
 }) ();
 
-const createPlayer = (name, mark) => {
+const createPlayer = (name, mark, visualMark) => {
     const playMove = (row, column) => {return {mark, position: {row, column}}};
 
-    return {name, mark, playMove}
+    return {name, mark, playMove, visualMark}
 };
 
 const Game = (function() {
@@ -34,7 +34,7 @@ const Game = (function() {
             const score = row.reduce((sum, cell) => {return sum + cell});
             rowScores.push(score);
         });
-        if (rowScores.filter(score => score === 3).length === 1) {
+        if (rowScores.filter(score => score === 3).length === 1 || rowScores.filter(score => score === -3).length === 1 ) {
             return true;
         } else {
             return false;
@@ -50,7 +50,7 @@ const Game = (function() {
             }
             columnScores.push(score);
         };
-        if (columnScores.filter(score => score === 3).length === 1) {
+        if (columnScores.filter(score => score === 3).length === 1 || columnScores.filter(score => score === -3).length === 1) {
             return true;
         } else {
             return false;
@@ -65,7 +65,7 @@ const Game = (function() {
             diagonal2score += board[i].at(-i-1);
         };
         const diagonalScores = [diagonal1score, diagonal2score];
-        if (diagonalScores.filter(score => score === 3).length === 1) {
+        if (diagonalScores.filter(score => score === 3).length === 1 || diagonalScores.filter(score => score === -3).length === 1) {
             return true;
         } else {
             return false;
@@ -80,12 +80,7 @@ const Game = (function() {
             return false;
         }
     };
-    const playCurrentTurn = (player) => {
-        console.log(`${player.name}, it's your turn. choose a move.`);
-        alert(`${player.name}, it's your turn. choose a move.`);
-        const row = parseInt(prompt("Choose row"));
-        const column = parseInt(prompt("Choose column"));
-
+    const playCurrentTurn = (player, row, column) => {
         const move = player.playMove(row, column);
         return Board.placeMove(move);
     };
@@ -95,24 +90,48 @@ const Game = (function() {
             players = [players[1], players[0]];
         } else {
             console.log(`${players[0].name} Choose another square`);
-            alert(`${players[0].name} Choose another square`);
         };
     };
 
     return {playCurrentTurn, moveToNextTurn, checkEnd}
 })();
 
-const player1 = createPlayer("A", 1);
-const player2 = createPlayer("B", -1);
+//DOM manipulation
+
+const boardEl = document.querySelector("main #board");
+const updateEl = document.querySelector("main #game-update");
+
+const xMark = `<svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+  <!-- Puffy cartoon X -->
+  <rect x="20" y="58" width="100" height="24" rx="12" ry="12"
+        fill="#333" transform="rotate(45 70 70)" />
+  <rect x="20" y="58" width="100" height="24" rx="12" ry="12"
+        fill="#333" transform="rotate(-45 70 70)" />
+</svg>`;
+
+const oMark = `<svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="70" cy="70" r="48" fill="none" stroke="#333" stroke-width="24" />
+</svg>
+`;
+
+
+const player1 = createPlayer("A", 1, xMark);
+const player2 = createPlayer("B", -1, oMark);
 
 let players = [player1, player2];
 
-// while (!Game.checkEnd()) {
-//     const turn = Game.playCurrentTurn(players[0]);
-//     Game.moveToNextTurn(turn);
-//     console.table(Board.getState())
-// };
-Board.clear();
-console.log(`Nice game. ${players[1].name} wins`);
+const displayTurn = (e) => {
+    squareEl = e.target.closest("div");
+    const row = parseInt(squareEl.dataset.row);
+    const column = parseInt(squareEl.dataset.column);
+    if (!Game.checkEnd()) {
+        const turn = Game.playCurrentTurn(players[0], row, column);
+        if (turn) {squareEl.innerHTML = players[0].visualMark;}
+        Game.moveToNextTurn(turn);
+    }
 
+    Game.checkEnd() ? updateEl.textContent = `Nice game. ${players[1].name} wins.` : null;
+}
+
+boardEl.addEventListener("click", displayTurn);
 
